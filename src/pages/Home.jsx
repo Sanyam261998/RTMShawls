@@ -22,7 +22,7 @@ function Home() {
 
   useEffect(() => {
     setLoading(true);
-    fetch("http://localhost:3001/products")
+    fetch("/api/products")
       .then((res) => res.json())
       .then((data) => {
         const processed = data.map((item) => ({
