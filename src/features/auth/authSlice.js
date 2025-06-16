@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 // Point this to your running proxy server
-const PROXY_LOGIN_URL = "http://localhost:3001/login";
+const PROXY_LOGIN_URL = "/api/login";
 
 // Async thunk for login
 export const login = createAsyncThunk(
