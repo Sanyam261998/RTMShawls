@@ -1,26 +1,22 @@
-version: "3.9"
+version: '3.8'
 
 services:
   frontend:
     build:
       context: .
-    working_dir: /app
+    ports:
+      - "5173:5173"
     volumes:
       - .:/app
       - /app/node_modules
-    ports:
-      - "5173:5173"
-    command: npm run dev
     environment:
       - CHOKIDAR_USEPOLLING=true
 
   backend:
     build:
       context: ./proxy-server
-    working_dir: /app
+    ports:
+      - "3001:3001"
     volumes:
       - ./proxy-server:/app
       - /app/node_modules
-    ports:
-      - "3001:3001"
-    command: node index.js
