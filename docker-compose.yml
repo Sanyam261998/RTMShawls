@@ -2,13 +2,15 @@ version: "3.8"
 
 services:
   frontend:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "80:80"
-    depends_on:
-      - backend
+      - "80:80"  # ✔ Now it's okay since we're using Nginx
+    restart: always
 
   backend:
     build: ./proxy-server
     ports:
       - "3001:3001"
+    restart: always
