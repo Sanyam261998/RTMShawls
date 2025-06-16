@@ -16,7 +16,7 @@ function AdminUserManagement() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:3001/users");
+      const res = await fetch("/api/users");
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       setAllUsers(data);
@@ -37,7 +37,7 @@ function AdminUserManagement() {
     if (!confirm) return;
 
     try {
-      const res = await fetch("http://localhost:3001/delete-user", {
+      const res = await fetch("/api/delete-user", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username }),
@@ -67,7 +67,7 @@ function AdminUserManagement() {
         agent: form.role === "client" ? form.agent.trim() : "",
       };
 
-      const res = await fetch("http://localhost:3001/add-user", {
+      const res = await fetch("/api/add-user", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
