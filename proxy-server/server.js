@@ -4,6 +4,12 @@ const axios = require("axios");
 const fs = require("fs");
 const path = require("path");
 const mime = require("mime-types");
+const PORT = process.env.PORT || 3001;
+const HOST = process.env.HOST || '0.0.0.0';
+
+
+// Example route
+
 
 const app = express();
 app.use(cors());
@@ -49,6 +55,10 @@ async function preloadImages() {
   }
 }
 
+
+app.get('/', (req, res) => {
+  res.send('Backend is running!');
+});
 
 
 // 🔐 LOGIN
@@ -175,7 +185,7 @@ app.get("/image", async (req, res) => {
 
 // 🚀 START SERVER
 app.listen(3001, async () => {
-  console.log("Proxy server running on http://localhost:3001");
+  console.log(`Proxy server running on http://${PORT}:${HOST}`);
   // await preloadImages(); // Start pre-caching images
 });
 
