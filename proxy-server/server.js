@@ -89,7 +89,7 @@ app.get("/products", async (req, res) => {
 
 // 🧾 PLACE ORDER
 app.post("/place-order", async (req, res) => {
-  const { user, placedBy, items } = req.body;
+  const { user, placedBy, items, note, totalOriginal, totalDiscounted, date } = req.body;
 
   try {
     const response = await axios.post(SCRIPT_URL, {
@@ -97,6 +97,10 @@ app.post("/place-order", async (req, res) => {
       user,
       placedBy,
       items,
+      note,
+      totalOriginal,
+      totalDiscounted,
+      date,
     });
 
     res.json(response.data);
