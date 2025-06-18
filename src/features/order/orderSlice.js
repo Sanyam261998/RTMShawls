@@ -1,18 +1,24 @@
-// /src/features/order/orderSlice.js
-
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 // Async thunk to place an order through the proxy server
 export const placeOrder = createAsyncThunk(
   "order/placeOrder",
-  async ({ user, placedBy, items }, thunkAPI) => {
+  async ({ user, placedBy, items, note, totalOriginal, totalDiscounted }, thunkAPI) => {
     try {
       const response = await fetch("http://localhost:3001/place-order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ user, placedBy, items }),
+        body: JSON.stringify({
+          user,
+          placedBy,
+          items,
+          note,
+          totalOriginal,
+          totalDiscounted,
+          date: new Date().toISOString(), // send consistent timestamp
+        }),
       });
 
       const data = await response.json();
@@ -24,6 +30,9 @@ export const placeOrder = createAsyncThunk(
         user,
         placedBy,
         items,
+        note,
+        totalOriginal,
+        totalDiscounted,
         date: new Date().toISOString(),
       };
     } catch (err) {
