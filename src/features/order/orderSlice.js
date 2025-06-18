@@ -5,7 +5,7 @@ export const placeOrder = createAsyncThunk(
   "order/placeOrder",
   async ({ user, placedBy, items, note, totalOriginal, totalDiscounted }, thunkAPI) => {
     try {
-      const response = await fetch("http://localhost:3001/place-order", {
+      const response = await fetch("/api/place-order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
