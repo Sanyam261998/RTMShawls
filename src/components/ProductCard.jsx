@@ -31,7 +31,8 @@ function ProductCard({ product }) {
       <h2 className="text-lg font-semibold text-primary mb-1">{product.Name}</h2>
       <p className="text-gray-300 mb-4">₹{product.Price}</p>
 
-      <button
+      {!isAdmin &&(
+              <button
         onClick={handleAdd}
         disabled={!!inCart}
         className={`mt-auto px-4 py-2 rounded font-semibold transition-all ${
@@ -42,6 +43,7 @@ function ProductCard({ product }) {
       >
         {inCart ? "Added to Cart" : "Add to Cart"}
       </button>
+      )}
     </div>
   );
 }
