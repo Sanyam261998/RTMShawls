@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../features/auth/authSlice";
-import fullLogo from "../assets/Full.jpg"
+import fullLogo from "../assets/FULL.jpg"
 
 function Login() {
   const dispatch = useDispatch();
