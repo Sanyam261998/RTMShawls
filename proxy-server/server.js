@@ -21,6 +21,11 @@ app.use(express.json());
 const IMAGE_DIR = path.join(__dirname, "cached_images");
 if (!fs.existsSync(IMAGE_DIR)) fs.mkdirSync(IMAGE_DIR);
 
+const imageCache = new LRUCache({
+  max: 100, // Max number of images
+  maxAge: 1000 * 60 * 60, // 1 hour TTL
+});
+
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwjD3qv7LQxGDN4u7M3JhqYsnfnK9pboNcF7EV3J1Wm40aJiwtg_kQWKIKFU7AhkpQC/exec";
 
 function extractDriveId(url) {
@@ -166,26 +171,32 @@ app.get("/image", async (req, res) => {
   const fileId = extractDriveId(url);
   if (!fileId) return res.status(400).send("Invalid Drive URL");
 
-  const filePath = path.join(IMAGE_DIR, `${fileId}.jpg`);
-  if (fs.existsSync(filePath)) {
-    const mimeType = mime.lookup(filePath) || "image/jpeg";
-    res.setHeader("Content-Type", mimeType);
-    return fs.createReadStream(filePath).pipe(res);
+  const cacheKey = `img:${fileId}`;
+  const cachedBuffer = imageCache.get(cacheKey);
+
+  if (cachedBuffer) {
+    res.setHeader("Content-Type", "image/jpeg");
+    return res.send(cachedBuffer);
   }
 
+  const driveUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
   try {
-    const driveUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
-    const response = await axios.get(driveUrl, {
-      responseType: "arraybuffer",
-    });
+    const response = await axios.get(driveUrl, { responseType: "arraybuffer" });
 
-    fs.writeFileSync(filePath, response.data);
-    const mimeType = mime.lookup(filePath) || "image/jpeg";
-    res.setHeader("Content-Type", mimeType);
-    return res.sendFile(filePath);
+    // Compress with Sharp
+    const compressed = await sharp(response.data)
+      .resize({ width: 600 }) // Resize width, auto height
+      .jpeg({ quality: 70 }) // Compress JPEG
+      .toBuffer();
+
+    // Store in LRU cache
+    imageCache.set(cacheKey, compressed);
+
+    res.setHeader("Content-Type", "image/jpeg");
+    res.send(compressed);
   } catch (err) {
-    console.error("Failed to fetch image:", err.message);
-    return res.status(500).send("Error fetching image");
+    console.error("Failed to process image:", err.message);
+    res.status(500).send("Image fetch failed");
   }
 });
 
